@@ -3,7 +3,6 @@ from datetime import datetime
 import math
 from models.improvements import Improvements
 import json
-import re
 
 COAL_POWER_PP = 8
 OIL_POWER_PP = 6
@@ -31,6 +30,8 @@ SHOPPING_MALL_C = 0.09
 STADIUM_C = 0.12
 SUBWAY_C = 0.08
 
+MINIMUM_WAGE_CONSTANT = 725
+
 
 class City:
 
@@ -45,7 +46,6 @@ class City:
         self.population = None
         self.population_density = None
         self.crime = None
-        self.average_income = None
         self.pollution_index = None
         self.age = None
         self.improvements = Improvements()
@@ -57,6 +57,9 @@ class City:
         self.age_bonus = None
         self.crime_deaths = None
         self.disease_deaths = None
+
+        self.base_revenue = None
+        self.average_income = None
 
     def import_city_from_id(self, session, city_id):
         self.id = city_id
@@ -107,6 +110,8 @@ class City:
         # Full Population And Density
         self.calculate_population()
         self.calculate_population_density()
+        # Revenue
+        self.calculate_average_income()
 
     def calculate_pollution(self):
         self.pollution_index = \
@@ -174,3 +179,7 @@ class City:
 
     def calculate_population_density(self):
         self.population_density = self.population / self.land
+
+    def calculate_average_income(self):
+        self.base_revenue = (MINIMUM_WAGE_CONSTANT / 1000) * self.population
+        self.average_income = ((self.commerce * 100 / 50) * self.base_revenue) + self.base_revenue
