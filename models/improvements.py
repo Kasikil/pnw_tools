@@ -31,6 +31,21 @@ class Improvements:
         self.imp_hangars = 0
         self.imp_drydock = 0
 
+        self.improvement_upkeep = 0  # Per Turn
+        self.daily_upkeep_cost = 0  # Per Day
+
+        self.coal_net_production = None
+        self.oil_net_production = None
+        self.uranium_net_production = None
+        self.lead_net_production = None
+        self.iron_net_production = None
+        self.bauxite_net_production = None
+        self.gasoline_net_production = None
+        self.munitions_net_production = None
+        self.steel_net_production = None
+        self.aluminum_net_production = None
+        self.food_net_production = None
+
     def import_improvements_json(self, city_improvements_json):
         self.infra_needed = city_improvements_json['infra_needed']
         self.imp_total = city_improvements_json['imp_total']
@@ -61,3 +76,46 @@ class Improvements:
         self.imp_factory = city_improvements_json['imp_factory']
         self.imp_hangars = city_improvements_json['imp_hangars']
         self.imp_drydock = city_improvements_json['imp_drydock']
+
+        self.calculate_improvement_upkeep()
+        self.calculate_net_resources()
+
+    def calculate_net_resources(self):
+        self.calculate_production_bonus()
+        pass
+
+    def calculate_production_bonus(self, number_of_improvements, max_slots):
+        """
+        max is 5 per city instead of like
+        6, 12 or 10 =(round((1 + (0.5(B41 - 1) / 5))B410.25, 2))12
+        so i think we take this formula and change the 5 to 4
+        """
+        pass
+
+    def calculate_improvement_upkeep(self):
+        self.improvement_upkeep = self.imp_coalpower * 100 + \
+            self.imp_oilpower * 150 + \
+            self.imp_nuclearpower * 875 + \
+            self.imp_windpower * 42 + \
+            self.imp_coalmine * (400 / 12) + \
+            self.imp_oilwell * 50 + \
+            self.imp_uramine * (5000 / 12) + \
+            self.imp_leadmine * (1500 / 12) + \
+            self.imp_ironmine * (1600 / 12) + \
+            self.imp_bauxitemine * (1600 / 12) + \
+            self.imp_farm * (300 / 12) + \
+            self.imp_gasrefinery * (4000 / 12) + \
+            self.imp_steelmill * (4000 / 12) + \
+            self.imp_aluminumrefinery * (2500 / 12) + \
+            self.imp_munitionsfactory * (3500 / 12) + \
+            self.imp_policestation * (750 / 12) + \
+            self.imp_hospital * (1000 / 12) + \
+            self.imp_recyclingcenter * (2500 / 12) + \
+            self.imp_subway * (3250 / 12) + \
+            self.imp_supermarket * (600 / 12) + \
+            self.imp_bank * (1800 / 12) + \
+            self.imp_mall * (5400 / 12) + \
+            self.imp_stadium * (12150 / 12)
+        self.daily_upkeep_cost = 12 * self.improvement_upkeep
+
+
